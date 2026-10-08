@@ -1,0 +1,83 @@
+# Thử API ngay trong VS Code bằng extension "REST Client" (humao.rest-client).
+# Bấm "Send Request" phía trên từng yêu cầu. Chạy yêu cầu đăng nhập trước để có token.
+
+@base = http://localhost:3000/api
+
+### Đăng nhập (đổi email để thử vai trò khác: lan@giaovien.example, admin@truong.example)
+# @name login
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "admin@truong.example", "password": "123456" }
+
+###
+@token = {{login.response.body.$.token}}
+
+### Hồ sơ của tôi
+GET {{base}}/me
+Authorization: Bearer {{token}}
+
+### Sáu chủ đề và quan hệ IS_A
+GET {{base}}/topics
+Authorization: Bearer {{token}}
+
+### Bài học của hình vuông + các hình tổng quát hơn
+GET {{base}}/topics/hinh-vuong/lessons
+Authorization: Bearer {{token}}
+
+### Tìm bài học (không cần gõ dấu)
+GET {{base}}/lessons?q=duong cheo
+Authorization: Bearer {{token}}
+
+### Bài tập theo chủ đề và mức độ
+GET {{base}}/exercises?topic=hinh-thang&level=1
+Authorization: Bearer {{token}}
+
+### Gửi đáp án một bài tập
+POST {{base}}/exercises/bt-03/attempts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "answer": "50" }
+
+### Danh sách bài kiểm tra đã công bố
+GET {{base}}/tests
+Authorization: Bearer {{token}}
+
+### Đề của một bài kiểm tra
+GET {{base}}/tests/kt-2
+Authorization: Bearer {{token}}
+
+### Nộp bài kiểm tra
+POST {{base}}/tests/kt-2/results
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "answers": { "bt-01": "100", "bt-04": "115", "bt-08": "135", "bt-02": "144" }, "seconds": 120 }
+
+### Tiến độ của tôi
+GET {{base}}/me/progress
+Authorization: Bearer {{token}}
+
+### [Giáo viên] Thêm bài tập
+POST {{base}}/exercises
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "topic": "hinh-thoi", "level": 2, "kind": "so", "stem": "Hình thoi có cạnh 7 cm. Tính chu vi.", "answer": "28", "unit": "cm", "solution": "P = 4 · 7 = 28 (cm)." }
+
+### [Giáo viên] Kết quả học sinh
+GET {{base}}/manage/students
+Authorization: Bearer {{token}}
+
+### [Quản trị] Tài khoản
+GET {{base}}/admin/users
+Authorization: Bearer {{token}}
+
+### [Quản trị] Thống kê đồ thị
+GET {{base}}/admin/stats
+Authorization: Bearer {{token}}
+
+### [Quản trị] Bản sao lưu Cypher
+GET {{base}}/admin/backup
+Authorization: Bearer {{token}}
